@@ -1,0 +1,11 @@
+.env
+.venv/
+__pycache__/
+*.pyc
+data/*.parquet
+data/*.jsonl
+data/*.json
+embeddings/*.npy
+.DS_Store
+.idea/
+.vscode/
