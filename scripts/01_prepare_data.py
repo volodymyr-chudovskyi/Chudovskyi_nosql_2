@@ -49,7 +49,14 @@ def main() -> None:
             "https://www.kaggle.com/datasets/Cornell-University/arxiv"
         )
 
+    # Taking the FIRST N matching records would give an all-2007-2013 subset
+    # (the snapshot is ordered oldest-first) and make year-based filters in
+    # 04_search.py meaningless. Instead keep every K-th matching record so the
+    # subset spans the whole snapshot's timeline.
+    KEEP_EVERY = 60  # ~500k matching records / 60 ≈ 8.3k → trimmed to N_RECORDS
+
     rows: list[dict] = []
+    seen = 0
     for rec in tqdm(iter_rows(IN_PATH), desc="Scanning arXiv"):
         cats = (rec.get("categories") or "").split()
         if not any(c in ALLOWED_CATS for c in cats):
@@ -57,6 +64,9 @@ def main() -> None:
         title = clean(rec.get("title") or "")
         abstract = clean(rec.get("abstract") or "")
         if len(abstract) < 100:
+            continue
+        seen += 1
+        if seen % KEEP_EVERY:
             continue
         update_year = (rec.get("update_date") or "")[:4]
         rows.append(

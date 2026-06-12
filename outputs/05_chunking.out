@@ -1,0 +1,54 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+=== Chunking comparison ===
+
+>> fixed_256
+  Q: transformer attention bottleneck and long-context inference
+    - hits=2/3
+    - Phase Conductor on Multi-layered Attentions for Machine Comprehension
+    - KGAT: Knowledge Graph Attention Network for Recommendation
+    - Linguistic unit discovery from multi-modal inputs in unwritten languages: Summar
+  Q: contrastive self-supervised representation learning for images
+    - hits=2/3
+    - Visual Transfer Learning: Informal Introduction and Literature Overview
+    - Learning audio and image representations with bio-inspired trainable feature ext
+    - Unsupervised Feature Learning through Divergent Discriminative Feature Accumulat
+  Q: differential privacy guarantees in federated learning
+    - hits=3/3
+    - Fair Resource Allocation in Federated Learning
+    - Differentially Private Empirical Risk Minimization
+    - Multi-objective Evolutionary Federated Learning
+
+>> fixed_256_overlap
+  Q: transformer attention bottleneck and long-context inference
+    - hits=3/3
+    - Phase Conductor on Multi-layered Attentions for Machine Comprehension
+    - Linguistic unit discovery from multi-modal inputs in unwritten languages: Summar
+    - Putting words in context: LSTM language models and lexical ambiguity
+  Q: contrastive self-supervised representation learning for images
+    - hits=2/3
+    - Visual Transfer Learning: Informal Introduction and Literature Overview
+    - Contrastive Variational Autoencoder Enhances Salient Features
+    - Learning audio and image representations with bio-inspired trainable feature ext
+  Q: differential privacy guarantees in federated learning
+    - hits=3/3
+    - Differentially Private Empirical Risk Minimization
+    - Fair Resource Allocation in Federated Learning
+    - Multi-objective Evolutionary Federated Learning
+
+>> sentence_256
+  Q: transformer attention bottleneck and long-context inference
+    - hits=3/3
+    - Phase Conductor on Multi-layered Attentions for Machine Comprehension
+    - Linguistic unit discovery from multi-modal inputs in unwritten languages: Summar
+    - Putting words in context: LSTM language models and lexical ambiguity
+  Q: contrastive self-supervised representation learning for images
+    - hits=2/3
+    - Visual Transfer Learning: Informal Introduction and Literature Overview
+    - Learning audio and image representations with bio-inspired trainable feature ext
+    - Unsupervised Feature Learning through Divergent Discriminative Feature Accumulat
+  Q: differential privacy guarantees in federated learning
+    - hits=3/3
+    - Fair Resource Allocation in Federated Learning
+    - Differentially Private Empirical Risk Minimization
+    - Multi-objective Evolutionary Federated Learning

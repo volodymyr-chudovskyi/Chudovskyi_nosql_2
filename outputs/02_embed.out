@@ -1,0 +1,4 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+Loaded 8,000 rows.
+Loading allenai/specter2_base on mps ...
+Saved embeddings shape=(8000, 768) → /Users/volodymyrchudovskyi/projects/study/hw2-semantic-search/embeddings/embeddings.npy
