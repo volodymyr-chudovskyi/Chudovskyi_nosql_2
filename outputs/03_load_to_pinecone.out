@@ -1,0 +1,3 @@
+Loaded 8,000 vectors, dim=768
+Creating index 'arxiv-search' (dim=768, cosine)...
+Index stats: DescribeIndexStatsResponse(dimension=768, total_vector_count=8000, metric='cosine', namespaces=1)

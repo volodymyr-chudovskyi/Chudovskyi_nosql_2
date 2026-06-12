@@ -1,89 +1,129 @@
-# HW2 — Semantic Search over arXiv
+# Завдання 2 — Семантичний пошук за науковими статтями (arXiv)
 
-Build an end-to-end semantic search pipeline for scientific papers: ingest the
-arXiv dataset, embed with **SPECTER2**, index in **Pinecone**, then compare
-pure-semantic, filtered, chunked, and hybrid (BM25 + vector via **RRF**)
-retrieval.
+Повний пайплайн семантичного пошуку: підбірка arXiv-анотацій → ембединги
+**SPECTER2** → індекс у **Pinecone** → три види пошуку (семантичний, з
+фільтрами, порівняння метрик) → порівняння стратегій чанкінгу → гібридний
+пошук **BM25 + вектори через RRF**.
 
-Coursework for *NoSQL and Vector Databases* (GoIT), Topic 7 → Завдання 2.
+Курс *NoSQL and Vector Databases* (GoIT Neoversity), Завдання 2.
 
-## Why these choices
+## Ключові рішення і чому саме так
 
-| Decision | Why |
-|----------|-----|
-| **SPECTER2** model | Trained on the citation graph of scientific papers — much better paper-to-paper similarity than a general-purpose `all-MiniLM`. Output is 768-d. |
-| **Cosine** as primary metric | SPECTER2 embeddings encode topic in the *direction* of the vector; magnitude is uninformative, so cosine is more stable than dot product across abstracts of different lengths. `04_search.py` shows the side-by-side. |
-| **Pinecone serverless** | Spec requirement. Free tier is enough for 8K vectors. Index is created with `cosine`. |
-| **Chunk size 256 tokens + 20% overlap** | Abstracts are mostly short, so chunking only matters for the longest ones. 256/50 is the typical RAG sweet spot — small enough that each chunk is one tight idea, big enough to retain context. `05_chunking.py` compares this against a no-overlap and a sentence-based variant. |
-| **RRF for hybrid** | Score-free fusion: no need to normalize BM25 scores against cosine. With `k=60` (Cormack et al.), a paper ranked top by either method bubbles up; a paper ranked decently by both wins. |
+| Рішення | Обґрунтування |
+|---------|---------------|
+| Модель **SPECTER2** (allenai/specter2_base, 768d) | Натренована на графі цитувань наукових статей — пара «стаття-стаття» лягає поруч у просторі набагато краще, ніж у загальних sentence-моделей. Вхід — `TITLE [SEP] ABSTRACT`, як рекомендують автори. |
+| **Cosine** як основна метрика | SPECTER2 кодує тему напрямком вектора, довжина неінформативна. Порівняння трьох метрик на живих запитах — у розділі «Метрики» нижче. |
+| **Pinecone serverless** (aws us-east-1, free tier) | Вимога специфікації; 8 000 векторів вільно вміщаються у безкоштовний тир. |
+| Підбірка **8 000 статей рівномірно по всьому дампу** | Перші N рядків дампа — статті 2007–2013 років, з ними фільтр «свіжі статті» повертав би порожнечу. Беру кожен 60-й відповідний запис — медіанний рік підбірки 2023, 5 020 статей ≥2022. |
+| **RRF (k=60)** для гібриду | Безшкальне злиття рангів: не треба нормалізувати BM25-бали проти косинусів. Документ, який обидва методи ставлять помірно високо, обганяє документ, який високо ставить лише один. |
 
-## Pipeline
-
-```
-01_prepare_data.py   →  data/arxiv_subset.parquet
-02_embed.py          →  embeddings/{embeddings.npy, ids.npy}
-03_load_to_pinecone  →  Pinecone index (~8K vectors)
-04_search.py         →  semantic / filtered / metric comparison
-05_chunking.py       →  fixed vs overlap vs sentence-based
-06_hybrid_search.py  →  BM25 + vector via RRF
-```
-
-## Setup
+## Як запустити з нуля
 
 ```bash
-# 1. Python env
-python3 -m venv .venv
-source .venv/bin/activate
+python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 
-# 2. Pinecone API key
-cp .env.example .env
-# edit .env, set PINECONE_API_KEY=...
+# Датасет: Cornell-University/arxiv з Kaggle (~1.6 GB JSONL).
+# Працює АНОНІМНО через kagglehub:
+python -c "import kagglehub; print(kagglehub.dataset_download('Cornell-University/arxiv'))"
+# → симлінк/копія snapshot-файлу в data/arxiv-metadata-oai-snapshot.json
 
-# 3. arXiv data
-# Download arxiv-metadata-oai-snapshot.json from
-# https://www.kaggle.com/datasets/Cornell-University/arxiv
-# Place it under data/
+cp .env.example .env   # вписати PINECONE_API_KEY
+
+python scripts/01_prepare_data.py     # 8k підбірка → parquet
+python scripts/02_embed.py            # SPECTER2 → embeddings.npy (768d)
+python scripts/03_load_to_pinecone.py # створення індексу + upsert
+python scripts/04_search.py           # 3 види пошуку
+python scripts/05_chunking.py         # порівняння чанкінгу (локально)
+python scripts/06_hybrid_search.py    # BM25 + вектори через RRF
 ```
 
-## Run
+Повні виводи всіх скриптів — у `outputs/`. Заміри на Apple Silicon (MPS):
+ембединг 8 000 анотацій — **~82 с**, створення індексу + upsert — ~2 хв.
 
-```bash
-python scripts/01_prepare_data.py        # ~30s after first download
-python scripts/02_embed.py               # 2-5 min on CPU, <1 min on GPU
-python scripts/03_load_to_pinecone.py    # ~1 min (creates index + upserts)
-python scripts/04_search.py              # demo: semantic / filter / metrics
-python scripts/05_chunking.py            # chunking strategy comparison
-python scripts/06_hybrid_search.py       # BM25 vs vector vs RRF
+## Що вийшло (результати)
+
+### 1. Чистий семантичний пошук (`04_search.py`, вивід в `outputs/04_search.out`)
+
+Запит *«transformer architecture for natural language understanding»* повертає
+top-5 виключно cs.CL-статті про трансформери і NLU (score 0.86–0.88) — жодна з
+них не містить дослівно фрази запиту. Це і є демонстрація переваги над
+повнотекстовим пошуком: матч за змістом, а не за збігом слів. Зворотний бік
+видно у гібридній частині нижче.
+
+### 2. Пошук з metadata-фільтром
+
+Той самий запит з `filter={primary_category: cs.CL, year: {$gte: 2022}}`
+повертає лише свіжі cs.CL-статті (2022–2024). Фільтр виконується всередині
+Pinecone ДО ранжування, а не post-hoc — top-k не «з'їдається» відсіяними
+документами.
+
+### 3. Порівняння метрик (cosine / dot product / euclidean)
+
+На запиті про GNN для молекулярних властивостей: **cosine і euclidean дають
+ідентичний top-5**, dot product — помітно інший список. Пояснення: для
+нормалізованих векторів L2² = 2 − 2·cos, тому ранжування збігається завжди;
+dot product додатково множить на довжину вектора, яка у SPECTER2 не несе
+смислу (довші анотації ≠ релевантніші) — тому для цієї моделі правильна
+метрика cosine, а dot product має сенс лише там, де довжина кодує значущість
+(напр., популярність у рекомендаціях).
+
+### 4. Чанкінг (`05_chunking.py`)
+
+Три стратегії на одних і тих самих довгих анотаціях, метрика — скільки разів
+релевантна стаття потрапила в top-3 (9 перевірок: 3 запити × 3 спроби):
+
+| Стратегія | Влучань |
+|-----------|---------|
+| fixed 256 токенів без перекриття | 7/9 |
+| fixed 256 + 20% overlap | **8/9** |
+| по реченнях з кепом 256 | **8/9** |
+
+Висновок для себе: на коротких текстах (анотації ~150–250 слів) чанкінг майже
+не вирішує — виграш дають overlap (рятує думку, розрізану межею чанка) і
+вирівнювання по реченнях (чанк = закінчена думка). Для повних текстів статей
+дельта була б більшою; для продакшн-RAG я б стартував із sentence-aware
+256/20%.
+
+### 5. Гібрид BM25 + вектори через RRF (`06_hybrid_search.py`)
+
+Найпоказовіший запит — *«Adversarial robustness of image classifiers under PGD
+attack»*: BM25 ставить №1 статтю «On Trace of PGD-Like Adversarial Attacks»
+(точний термін «PGD» — лексичний сигнал, який вектори розмивають), а
+векторний пошук дає ширший контекст adversarial-статей, але конкретно
+PGD-статтю не підіймає. **RRF тримає в top-5 і те, і те.**
+
+Чому гібрид виграє в обох методів окремо: лексичний і семантичний пошук
+помиляються ПО-РІЗНОМУ — BM25 сліпий до синонімів, вектори сліпі до рідкісних
+точних термінів (абревіатури, назви методів, ID). RRF без жодного тюнінгу
+шкал бере найкраще з обох рангових списків: `score(d) = Σ 1/(60 + rank_i(d))`.
+Це майже безкоштовний +quality у будь-якому пошуковому продукті.
+
+## Структура репозиторію
+
 ```
-
-## Project layout
-
-```
-hw2-semantic-search/
-├── .env.example
+.
+├── .env.example            # PINECONE_API_KEY=... (сам .env не комітиться)
 ├── .gitignore
 ├── requirements.txt
-├── README.md
-├── data/                  (gitignored: contains parquet + arXiv dump)
-├── embeddings/            (gitignored: .npy)
-└── scripts/
-    ├── 01_prepare_data.py
-    ├── 02_embed.py
-    ├── 03_load_to_pinecone.py
-    ├── 04_search.py
-    ├── 05_chunking.py
-    └── 06_hybrid_search.py
+├── data/                   # parquet-підбірка (генерується, не комітиться)
+├── embeddings/             # npy-вектори (генеруються, не комітяться)
+├── scripts/
+│   ├── 01_prepare_data.py  # JSONL-дамп → 8k підбірка → parquet
+│   ├── 02_embed.py         # SPECTER2, батчами на GPU/MPS/CPU
+│   ├── 03_load_to_pinecone.py
+│   ├── 04_search.py        # семантика / фільтри / метрики
+│   ├── 05_chunking.py      # 3 стратегії чанкінгу
+│   └── 06_hybrid_search.py # BM25 + вектори, RRF k=60
+├── outputs/                # повні виводи всіх запусків
+└── README.md
 ```
 
-## What each script demonstrates (key answers for the homework writeup)
+## Граблі, на які наступив
 
-- **Vector vs full-text** — `04_search.py` returns relevant papers for queries whose terms don't appear literally; BM25 in `06_hybrid_search.py` fails on the same queries when phrasing differs.
-- **Chunking trade-off** — `05_chunking.py` shows that for short abstracts the strategy matters less, but overlap helps when an abstract straddles two themes.
-- **Why RRF wins** — `06_hybrid_search.py` shows examples where BM25 ranks an exact-match paper #1 but misses synonym matches, and the vector index finds the synonym matches but misses an obvious keyword hit — RRF lands both in top-5.
-
-## Notes / known limitations
-
-- `02_embed.py` downloads SPECTER2 weights (~440 MB) on first run.
-- Pinecone serverless free tier is region-locked; if `us-east-1` is unavailable on your free account, change `PINECONE_REGION` in `.env`.
-- `05_chunking.py` uses a smaller 1500-paper subset to keep the in-memory comparison fast; final answers will be representative but not exhaustive.
+- Перші 8 000 відповідних записів дампа — все 2007–2013: довелось переписати
+  семплінг на «кожен 60-й», інакше фільтр `year >= 2022` повертав порожнечу.
+- Kaggle CLI вимагає креденшали, а `kagglehub` тягне публічні датасети
+  анонімно — економить цілий крок налаштування.
+- В упсерті до Pinecone метадані не можуть бути `null` — поля з NaN треба
+  чистити до завантаження.

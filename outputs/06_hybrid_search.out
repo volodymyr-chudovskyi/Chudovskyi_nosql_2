@@ -1,0 +1,73 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+================================================================================
+Q: How do attention mechanisms scale with sequence length?
+
+  BM25 only
+    1. [cs.LG] Adaptive Multi-Resolution Attention with Linear Complexity
+    2. [cs.AI] Large Body Language Models
+    3. [cs.NE] NiSNN-A: Non-iterative Spiking Neural Networks with Attention with Application to Motor Im
+    4. [cs.CL] What Really Matters in Many-Shot Attacks? An Empirical Study of Long-Context Vulnerabiliti
+    5. [cs.CL] Gated Delta Networks: Improving Mamba2 with Delta Rule
+
+  Vector only
+    1. [cs.CL] Cross-Lingual Transfer of Cognitive Processing Complexity
+    2. [cs.CL] From Words to Worlds: Compositionality for Cognitive Architectures
+    3. [cs.CL] Adaptive Token Boundaries: Integrating Human Chunking Mechanisms into Multimodal LLMs
+    4. [cs.NE] Associative memory inspires improvements for in-context learning using a novel attention r
+    5. [cs.CV] Unified Attention Modeling for Efficient Free-Viewing and Visual Search via Shared Represe
+
+  Hybrid (RRF)
+    1. [cs.CL] Gated Delta Networks: Improving Mamba2 with Delta Rule
+    2. [cs.LG] Adaptive Multi-Resolution Attention with Linear Complexity
+    3. [cs.CL] Cross-Lingual Transfer of Cognitive Processing Complexity
+    4. [cs.AI] Large Body Language Models
+    5. [cs.CL] From Words to Worlds: Compositionality for Cognitive Architectures
+
+================================================================================
+Q: Distillation of large language models into smaller students.
+
+  BM25 only
+    1. [cs.CV] Distilled Siamese Networks for Visual Tracking
+    2. [cs.CL] Enhancing SLM via ChatGPT and Dataset Augmentation
+    3. [cs.CV] Spatiotemporal Knowledge Distillation for Efficient Estimation of Aerial Video Saliency
+    4. [cs.CL] Patient Knowledge Distillation for BERT Model Compression
+    5. [cs.CL] A Survey on Knowledge Distillation of Large Language Models
+
+  Vector only
+    1. [cs.LG] Applying sparse autoencoders to unlearn knowledge in language models
+    2. [cs.CL] Linguistic unit discovery from multi-modal inputs in unwritten languages: Summary of the "
+    3. [cs.CL] Leashing the Inner Demons: Self-Detoxification for Language Models
+    4. [cs.CL] A Survey on Feedback-based Multi-step Reasoning for Large Language Models on Mathematics
+    5. [cs.CL] Rethinking Tokenization: Crafting Better Tokenizers for Large Language Models
+
+  Hybrid (RRF)
+    1. [cs.CL] Enhancing SLM via ChatGPT and Dataset Augmentation
+    2. [cs.CL] A Survey on Knowledge Distillation of Large Language Models
+    3. [cs.CV] Distilled Siamese Networks for Visual Tracking
+    4. [cs.LG] Applying sparse autoencoders to unlearn knowledge in language models
+    5. [cs.CL] Linguistic unit discovery from multi-modal inputs in unwritten languages: Summary of the "
+
+================================================================================
+Q: Adversarial robustness of image classifiers under PGD attack.
+
+  BM25 only
+    1. [cs.CV] On Trace of PGD-Like Adversarial Attacks
+    2. [cs.LG] Adversarial Robustness of Stabilized NeuralODEs Might be from Obfuscated Gradients
+    3. [cs.CV] Understanding Robustness of Parameter-Efficient Tuning for Image Classification
+    4. [cs.CV] Structure Matters: Towards Generating Transferable Adversarial Images
+    5. [cs.CV] GSBA$^K$: $top$-$K$ Geometric Score-based Black-box Attack
+
+  Vector only
+    1. [cs.CV] UPSET and ANGRI : Breaking High Performance Image Classifiers
+    2. [cs.CV] Sparse Adversarial Attack to Object Detection
+    3. [cs.CV] Learning to Attack with Fewer Pixels: A Probabilistic Post-hoc Framework for Refining Arbi
+    4. [cs.CV] Visual Adversarial Attacks and Defenses in the Physical World: A Survey
+    5. [cs.CV] Attention, Please! Adversarial Defense via Activation Rectification and Preservation
+
+  Hybrid (RRF)
+    1. [cs.CV] Sparse Adversarial Attack to Object Detection
+    2. [cs.CV] Learning to Attack with Fewer Pixels: A Probabilistic Post-hoc Framework for Refining Arbi
+    3. [cs.CV] On Trace of PGD-Like Adversarial Attacks
+    4. [cs.LG] Sparse DNNs with Improved Adversarial Robustness
+    5. [cs.LG] Test-time adversarial detection and robustness for localizing humans using ultra wide band

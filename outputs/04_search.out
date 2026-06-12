@@ -1,0 +1,44 @@
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+
+========== (1) Pure semantic search ==========
+
+--- Q: 'transformer architecture for natural language understanding' ---
+  0.879  [cs.CL 2021]  Relation Aware Semi-autoregressive Semantic Parsing for NL2SQL
+  0.871  [cs.CL 2023]  RussianSuperGLUE: A Russian Language Understanding Evaluation Benchmark
+  0.867  [cs.CL 2024]  Speech Recognition Transformers: Topological-lingualism Perspective
+  0.864  [cs.CL 2022]  AdaLoGN: Adaptive Logic Graph Network for Reasoning-Based Machine Reading Comprehension
+  0.863  [cs.CL 2020]  INSET: Sentence Infilling with INter-SEntential Transformer
+
+========== (2) Filter: recent NLP papers only ==========
+
+--- Q: 'transformer architecture for natural language understanding' | cs.CL & year>=2022 ---
+  0.871  [cs.CL 2023]  RussianSuperGLUE: A Russian Language Understanding Evaluation Benchmark
+  0.867  [cs.CL 2024]  Speech Recognition Transformers: Topological-lingualism Perspective
+  0.864  [cs.CL 2022]  AdaLoGN: Adaptive Logic Graph Network for Reasoning-Based Machine Reading Comprehension
+  0.861  [cs.CL 2023]  A Survey of Knowledge Enhanced Pre-trained Models
+  0.857  [cs.CL 2023]  Generating Continuations in Multilingual Idiomatic Contexts
+
+========== (3) Metric comparison ==========
+
+>> Q: 'graph neural networks applied to molecular property prediction'
+
+  ~ ranked by cosine
+    Discovering Molecular Functional Groups Using Graph Convolutional Neural Networks
+    GraphIX: Graph-based In silico XAI(explainable artificial intelligence) for drug repositio
+    Toxicity Detection in Drug Candidates using Simplified Molecular-Input Line-Entry System
+    GENN: Predicting Correlated Drug-drug Interactions with Graph Energy Neural Networks
+    SAF: Smart Aggregation Framework for Revealing Atoms Importance Rank and Improving Predict
+
+  ~ ranked by dot product
+    Toxicity Detection in Drug Candidates using Simplified Molecular-Input Line-Entry System
+    GraphIX: Graph-based In silico XAI(explainable artificial intelligence) for drug repositio
+    A Conjoint Graph Representation Learning Framework for Hypertension Comorbidity Risk Predi
+    Factor Graph Neural Network
+    A Survey of Graph Transformers: Architectures, Theories and Applications
+
+  ~ ranked by euclidean L2
+    Discovering Molecular Functional Groups Using Graph Convolutional Neural Networks
+    GraphIX: Graph-based In silico XAI(explainable artificial intelligence) for drug repositio
+    Toxicity Detection in Drug Candidates using Simplified Molecular-Input Line-Entry System
+    GENN: Predicting Correlated Drug-drug Interactions with Graph Energy Neural Networks
+    SAF: Smart Aggregation Framework for Revealing Atoms Importance Rank and Improving Predict
